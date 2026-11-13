@@ -1,0 +1,71 @@
+<section class="p-4 md:w-[80%] lg:w-[70%] m-auto">
+    <div class="bg-white rounded-2xl py-3 shadow-md mt-5 ">
+    <div class="flex items-center justify-between px-4">
+        <div class="flex items-center gap-2">
+            <figure class="w-12">
+                <img [src]="display().user.photo" alt="" class="w-full rounded-full h-12 object-cover">
+            </figure>
+            <div>
+                <p class="font-bold mb-0">{{display().user.name}}</p>
+                <p class="text-black/50 inline-block mr-3.5">{{display().user.username}}</p>
+                <span class="opacity-45">{{display().createdAt}}</span>
+            </div>
+        </div>
+        <!-- <div class="relative" (click)="$event.stopPropagation()">
+            <button (click)="toggleB(display()._id)">
+                <i class="fa-solid fa-ellipsis"></i>
+            </button>
+
+            <div [hidden]="toggle() !== item._id" 
+                class="absolute bg-white p-2.5 rounded-2xl left-1/2 -translate-x-1/2 shadow z-10">
+
+                <button (click)="close()">Saved</button>
+
+                @if (item.user._id === loggedUserData()._id) {
+                <div>
+                    <button (click)="delete(item._id) ; close()" class="text-red-600">
+                        Delete
+                    </button>
+                    <button (click)="close()">Edit</button>
+                </div>
+                }
+            </div>
+        </div> -->
+    </div>
+
+    <p class="pl-3 mt-4">{{display().body}}</p>
+
+    <figure class="w-full mt-6 border-b border-b-black/20">
+        <img [src]="display().image" alt="" class="w-full">
+    </figure>
+
+    <div class="pt-3 px-3 flex items-center justify-between">
+        <div>
+            <i class="fa-solid fa-thumbs-up text-blue-500 mr-1.5"></i>
+            <span class="opacity-70">{{display().likesCount}} likes</span>
+        </div>
+
+
+        <div class="flex gap-3">
+            <span class="text-[0.8rem] opacity-70">{{display().sharesCount}} shares</span>
+            <span class="text-[0.8rem] opacity-70">{{display().commentsCount}} comments</span>
+            <button [routerLink]="['/postdetails',display()._id]" class="text-[0.8rem] text-blue-600 font-medium">view details</button>
+        </div>
+    </div>
+
+    <hr class="opacity-20 mx-4 mt-3">
+
+    <div class="flex justify-around gap-1.5 px-3 pt-3">
+        <button class="opacity-70 cursor-pointer w-full"><i
+                class="fa-regular fa-thumbs-up mr-1.5"></i><span>like</span></button>
+        <button #comment class="opacity-70 cursor-pointer  w-full"><i
+                class="fa-regular fa-comment mr-1.5"></i><span>comment</span></button>
+        <button class="opacity-70 cursor-pointer  w-full"><i
+                class="fa-solid fa-share-nodes mr-1.5"></i><span>share</span></button>
+
+    </div>
+    @defer (on interaction(comment)) {
+    <app-comments [postId]="display()._id"></app-comments>
+    }
+</div>
+</section>

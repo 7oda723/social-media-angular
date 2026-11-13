@@ -1,0 +1,155 @@
+<form #createForm (submit)="creatPost($event,createForm)">
+    <div class="bg-white rounded-2xl p-3 shadow-md mt-5 ">
+        <div class="flex items-center">
+            <figure class="w-12">
+                <img src="img/default-profile.png" alt="" class="w-full">
+            </figure>
+
+            <div>
+                <p class="font-bold mt-3">Ahmed Mohamed</p>
+                <select [formControl]="postPrivacy" name="select"
+                    class="border-0 bg-[#e9eef8e6] h-10 rounded-3xl mt-2 text-[0.9rem]">
+                    <option value="public">public</option>
+                    <option value="following">followers</option>
+                    <option value="only_me">only me</option>
+                </select>
+            </div>
+        </div>
+
+        <textarea [formControl]="postBody" name="" placeholder="What is on your mind Ahmed"
+            class="w-full h-36 text-[1.1rem] placeholder:text-black/40 pt-3 my-3.5 border border-[#e2e8f088] rounded-2xl bg-[#e9eef84d]"></textarea>
+
+        @if (imgUrl()) {
+        <div class="w-full">
+            <img [src]="imgUrl()" alt="" class="w-full">
+        </div>
+        }
+
+        <hr class="opacity-40">
+
+        <div class="pt-3.5 px-2 flex justify-between items-center">
+            <label for="file">
+                <i class="fa-regular fa-image text-green-500 text-2xl"></i>
+                <span class="hidden">Photo/video</span>
+                <input (change)="loadedFile($event)" id="file" type="file" class="hidden">
+            </label>
+
+            <button class="bg-blue-500 text-white px-4 py-1 rounded-2xl shadow cursor-pointer">Post</button>
+        </div>
+    </div>
+   
+</form>
+ <input type="text" class="w-full rounded-2xl mt-4 border-black/20" [(ngModel)]="search">
+ <!-- <p appTest>TEST</p> -->
+@for (item of allPost()|filter:search() ; track item._id) {
+<div class="bg-white rounded-2xl py-3 shadow-md mt-5 ">
+    <div class="flex items-center justify-between px-4">
+        <div class="flex items-center gap-2">
+            <figure class="w-12">
+                <img [src]="item.user.photo" alt="" class="w-full rounded-full h-12 object-cover">
+            </figure>
+            <div>
+                <p class="font-bold mb-0">{{item.user.name |uppercase}}</p>
+                <p class="text-black/50 inline-block mr-3.5">{{item.user.username|hello}}</p>
+                <span class="opacity-45">{{item.createdAt | date:'short'}}</span>
+            </div>
+        </div>
+        <div class="relative" (click)="$event.stopPropagation()">
+            <button (click)="toggleB(item._id)">
+                <i class="fa-solid fa-ellipsis"></i>
+            </button>
+
+            <div [hidden]="toggle() !== item._id" 
+                class="absolute bg-white p-2.5 rounded-2xl left-1/2 -translate-x-1/2 shadow z-10">
+
+                <button (click)="close()">Saved</button>
+
+                @if (item.user._id === loggedUserData()._id) {
+                <div>
+                    <button (click)="delete(item._id) ; close()" class="text-red-600">
+                        Delete
+                    </button>
+                    <button (click)="close()">Edit</button>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <p class="px-4 mt-4">{{item.body}}</p>
+
+    <figure class="w-full mt-6 border-b border-b-black/20">
+        <img [src]="item.image" alt="" class="w-full">
+    </figure>
+
+    <div class="pt-3 px-3 flex items-center justify-between">
+        <div>
+            <i class="fa-solid fa-thumbs-up text-blue-500 mr-1.5"></i>
+            <span class="opacity-70">{{item.likesCount}} likes</span>
+        </div>
+
+
+        <div class="flex gap-3">
+            <span class="text-[0.8rem] opacity-70">{{item.sharesCount}} shares</span>
+            <span class="text-[0.8rem] opacity-70">{{item.commentsCount}} comments</span>
+            <button [routerLink]="['/postdetails',item._id]" class="text-[0.8rem] text-blue-600 font-medium">view details</button>
+        </div>
+    </div>
+
+    <hr class="opacity-20 mx-4 mt-3">
+
+    <div class="flex justify-around gap-1.5 px-3 pt-3">
+        <button class="opacity-70 cursor-pointer w-full"><i
+                class="fa-regular fa-thumbs-up mr-1.5"></i><span>like</span></button>
+        <button  (click)="toggleComments(item._id)" class="opacity-70 cursor-pointer  w-full"><i
+                class="fa-regular fa-comment mr-1.5"></i><span>comment</span></button>
+        <button class="opacity-70 cursor-pointer  w-full"><i
+                class="fa-solid fa-share-nodes mr-1.5"></i><span>share</span></button>
+
+    </div>
+    <!-- @defer (on interaction(comment)) { -->
+    <app-comments [postId]="item._id" [hidden]="toggleComment() !== item._id"></app-comments>
+    <!-- } -->
+</div>
+}
+
+<!-- 
+<nav aria-label="Page navigation example" class="mx-auto ">
+  <ul class="flex -space-x-px text-sm justify-center my-4 ">
+    <li>
+      <button (click)="Previous()" [ariaDisabled]="currentPage() === 1" class="flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading font-medium rounded-s-base text-sm px-3 h-9 focus:outline-none">Previous</button>
+    </li>
+    <li>
+      <a href="#" class="flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading font-medium text-sm w-9 h-9 focus:outline-none">1</a>
+    </li>
+    <li>
+      <a href="#" class="flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading font-medium text-sm w-9 h-9 focus:outline-none">2</a>
+    </li>
+    <li>
+      <a href="#" aria-current="page" class="flex items-center justify-center text-fg-brand bg-neutral-tertiary-medium box-border border border-default-medium hover:text-fg-brand font-medium text-sm w-9 h-9 focus:outline-none">3</a>
+    </li>
+    <li>
+      <a href="#" class="flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading font-medium text-sm w-9 h-9 focus:outline-none">4</a>
+    </li>
+    <li>
+      <a href="#" class="flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading font-medium text-sm w-9 h-9 focus:outline-none">5</a>
+    </li>
+    <li>
+      <button  (click)="next()" [ariaDisabled]="currentPage() === totalPage()" class="flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading font-medium rounded-e-base text-sm px-3 h-9 focus:outline-none">Next</button>
+    </li>
+  </ul>
+</nav> -->
+<div class="mx-auto my-7 gap-2.5 flex items-center justify-center">
+    <button (click)="Previous()" [disabled]="currentPage() === 1"
+        class="cursor-pointer bg-blue-600 text-white rounded-2xl px-3 py-1 disabled:opacity-40">
+        Previous
+    </button>
+
+    <span>{{ currentPage() }} / {{ totalPage() }}</span>
+
+    <button (click)="next()" [disabled]="currentPage() === totalPage()"
+        class="cursor-pointer text-white bg-blue-600 rounded-2xl px-3 py-1 disabled:opacity-40">
+        Next
+    </button>
+
+</div>
